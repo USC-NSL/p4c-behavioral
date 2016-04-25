@@ -1055,6 +1055,48 @@ ${name}
 
 /* END OF INDIRECT ACTION DATA AND MATCH SELECT */
 
+/* REGISTERS */
+//:: for register, r_info in register_info.items():
+//::   name = "p4_pd_" + p4_prefix + "_register_read_" + register 
+uint64_t
+${name}
+(
+ p4_pd_sess_hdl_t sess_hdl,
+ p4_pd_dev_target_t dev_tgt,
+ int index
+)
+{
+	uint64_t register_value;
+	register_value = stateful_dump_register_${register}(index);
+	return register_value;
+}
+
+//::   name = "p4_pd_" + p4_prefix + "_register_read_whole_" + register
+//::   instance_count = r_info["instance_count"]
+//::   byte_width = r_info["byte_width"]
+void 
+${name}
+(
+ p4_pd_sess_hdl_t sess_hdl,
+ p4_pd_dev_target_t dev_tgt,
+ int8_t *ret
+)
+{
+	stateful_dump_whole_register_${register} (ret);
+}
+
+//::   name = "p4_pd_" + p4_prefix + "_register_clean_" + register
+void
+${name}
+(
+ p4_pd_sess_hdl_t sess_hdl,
+ p4_pd_dev_target_t dev_tgt
+)
+{
+	stateful_clean_register_${register}();
+}
+
+//:: #endfor
 
 /* COUNTERS */
 

@@ -79,4 +79,12 @@ void stateful_read_register_${r_name}(phv_data_t *phv, int index,
 				      uint8_t *mask_ptr, int mask_len);
 //:: #endfor
 
+//:: for r_name, r_info in register_info.items():
+//::   byte_width = r_info["byte_width"]
+uint64_t stateful_dump_register_${r_name} (int index);
+void stateful_dump_whole_register_${r_name} (int8_t* dst);
+void stateful_clean_register_${r_name} ();
+//:: #endfor
+
+
 #endif

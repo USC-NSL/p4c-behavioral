@@ -1,3 +1,7 @@
+/*
+ * Modified by Yuliang Li liyuliang001@gmail.com
+ */
+
 //:: pd_prefix = "p4_pd_" + p4_prefix + "_"
 //:: pd_static_prefix = "p4_pd_"
 //:: api_prefix = p4_prefix + "_"
@@ -18,6 +22,7 @@ extern "C" {
 }
 
 #include <list>
+#include <vector>
 #include <map>
 #include <pthread.h>
 
@@ -805,6 +810,40 @@ public:
         return pd_entry;
     }
 //:: #endfor
+
+    // REGISTERS
+//:: for register, r_info in register_info.items():
+//::   name = "register_read_" + register
+//::   pd_name = pd_prefix + name
+    int64_t ${name}(const SessionHandle_t sess_hdl, const DevTarget_t &dev_tgt, const int32_t index) {
+      std::cerr << "In ${name}\n";
+
+      p4_pd_dev_target_t pd_dev_tgt;
+      pd_dev_tgt.device_id = dev_tgt.dev_id;
+      pd_dev_tgt.dev_pipe_id = dev_tgt.dev_pipe_id;
+
+      int64_t register_value = ${pd_name}(sess_hdl, pd_dev_tgt, index);
+	  return register_value;
+    }
+//::   name = "register_read_whole_" + register
+//::   pd_name = pd_prefix + name
+//::   byte_width = r_info["byte_width"]
+//::   instance_count = r_info["instance_count"]
+    void ${name}(std::vector<int8_t> & _return, const SessionHandle_t sess_hdl, const  DevTarget_t& dev_tgt) {
+      p4_pd_dev_target_t pd_dev_tgt;
+      pd_dev_tgt.device_id = dev_tgt.dev_id;
+      pd_dev_tgt.dev_pipe_id = dev_tgt.dev_pipe_id;
+
+	  int8_t ret[${byte_width} * ${instance_count}];
+	  ${pd_name}(sess_hdl, pd_dev_tgt, ret);
+
+	  _return.resize(${byte_width} * ${instance_count});
+	  for (int i = 0; i < _return.size(); i++)
+		  _return[i] = ret[i];
+	}
+//:: #endfor
+
+
 
     // COUNTERS
 //:: for counter, c_info in counter_info.items():

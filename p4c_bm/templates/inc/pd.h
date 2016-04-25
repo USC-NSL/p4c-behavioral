@@ -14,6 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/*
+ * Modified by Yuliang Li liyuliang001@gmail.com
+ */
+
 #ifndef _RMT_PD_H
 #define _RMT_PD_H
 
@@ -547,6 +551,37 @@ ${name}
 //:: #endfor
 
 /* END OF INDIRECT */
+
+/* REGISTERS */
+
+//:: for register, r_info in register_info.items():
+//::   name = "p4_pd_" + p4_prefix + "_register_read_" + register 
+uint64_t
+${name}
+(
+ p4_pd_sess_hdl_t sess_hdl,
+ p4_pd_dev_target_t dev_tgt,
+ int index 
+);
+
+//::   name = "p4_pd_" + p4_prefix + "_register_read_whole_" + register
+void 
+${name}
+(
+ p4_pd_sess_hdl_t sess_hdl,
+ p4_pd_dev_target_t dev_tgt,
+ int8_t *ret
+);
+
+//::   name = "p4_pd_" + p4_prefix + "_register_clean_" + register
+void
+${name}
+(
+ p4_pd_sess_hdl_t sess_hdl,
+ p4_pd_dev_target_t dev_tgt
+);
+
+//:: #endfor
 
 /* COUNTERS */
 

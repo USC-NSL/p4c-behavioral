@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Modified by Yuliang Li liyuliang001@gmail.com
+
 //:: # P4 Thrift RPC Input Template
 # P4 Thrift RPC Input
 
@@ -464,6 +466,16 @@ service ${p4_prefix} {
     # clean table state
 //:: name = "tables_clean_all"
     i32 ${name}(1:res.SessionHandle_t sess_hdl, 2:res.DevTarget_t dev_tgt);
+
+    # registers
+//:: for register, r_info in register_info.items():
+//::   name = "register_read_" + register
+    i64 ${name}(1:res.SessionHandle_t sess_hdl,
+    2:res.DevTarget_t dev_tgt, 3:i32 index);
+//::   name = "register_read_whole_" + register
+	list<byte> ${name} (1: res.SessionHandle_t sess_hdl,
+    2:res.DevTarget_t dev_tgt);
+//:: #endfor
 
     # counters
 

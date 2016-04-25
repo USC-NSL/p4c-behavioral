@@ -14,6 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/*
+ * Modified by Yuliang Li liyuliang001@gmail.com
+ */
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -269,6 +273,41 @@ void stateful_read_register_${r_name} (phv_data_t *phv, int index,
 		       (uint8_t *) src, ${byte_width},
 		       mask_ptr, mask_len);
   pthread_mutex_unlock(&reg_${r_name}.lock);
+}
+
+//:: #endfor
+
+//:: for r_name, r_info in register_info.items():
+//::   byte_width = r_info["byte_width"]
+uint64_t stateful_dump_register_${r_name} (int index){
+	char *src = reg_${r_name}.instances + index * ${byte_width};
+	uint64_t res = 0;
+	pthread_mutex_lock(&reg_${r_name}.lock);
+//::   start = byte_width - 8
+//::   if start < 0:
+//::     start = 0
+//::   #endif
+//::   for i in xrange(start, byte_width):
+	res += (uint64_t)src[${i}] << ((${byte_width}-${i}-1) * 8);
+//::   #endfor
+	pthread_mutex_unlock(&reg_${r_name}.lock);
+	return res;
+}
+
+//::   instance_count = r_info["instance_count"]
+void stateful_dump_whole_register_${r_name} (int8_t* dst){
+	char *src = reg_${r_name}.instances;
+	pthread_mutex_lock(&reg_${r_name}.lock);
+	int i = 0;
+	for (i = 0; i < ${byte_width} * ${instance_count}; i++)
+		dst[i] = src[i];
+	pthread_mutex_unlock(&reg_${r_name}.lock);
+}
+
+void stateful_clean_register_${r_name} (){
+	pthread_mutex_lock(&reg_${r_name}.lock);
+	memset(reg_${r_name}.instances, 0, ${byte_width} * ${instance_count});
+	pthread_mutex_unlock(&reg_${r_name}.lock);
 }
 
 //:: #endfor

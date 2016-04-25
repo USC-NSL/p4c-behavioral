@@ -177,6 +177,10 @@ static inline void identity(uint8_t *buf, int len, uint8_t *result) {
   }
 }
 
+/*
+ * The following murmur3_32 code is copied from wikipedia: https://en.wikipedia.org/wiki/MurmurHash
+ */
+
 #define ROT32(x, y) ((x << y) | (x >> (32 - y))) // avoid effort
 static inline uint32_t murmur3_32(const uint8_t *key, uint32_t len, uint32_t seed) {
 	static const uint32_t c1 = 0xcc9e2d51;
